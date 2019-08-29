@@ -86,38 +86,62 @@ class CanvasRenderer{
 
 		var font = options.fontOptions + " " + options.fontSize + "px " + options.font;
 
+		var tailFont = options.tailsFontOptions + " " + options.tailsFontSize + "px " + options.font;
+
 		// Draw the text if displayValue is set
 		if(options.displayValue){
-			var x, y;
+			var x, y, tx, ty;
+			let alen = encoding.text.length - parseInt(options.tailsCount);
+			let aText = encoding.text.slice(0, alen) //获取前半部分文字
+			let tText = encoding.text.slice(alen)    //获取后半部分
 
 			if(options.textPosition == "top"){
 				y = options.marginTop + options.fontSize - options.textMargin;
+				ty = options.marginTop + options.tailsFontSize - options.textMargin;
 			}
 			else{
 				y = options.height + options.textMargin + options.marginTop + options.fontSize;
+				ty = options.height + options.textMargin + options.marginTop + options.tailsFontSize;
 			}
 
 			ctx.font = font;
+			let aTextWidth = ctx.measureText(aText).width;
+			ctx.font = tailFont;
+			let tTextWidth = ctx.measureText(tText).width;
 
 			// Draw the text in the correct X depending on the textAlign option
 			if(options.textAlign == "left" || encoding.barcodePadding > 0){
 				x = 0;
+				tx = aTextWidth;
 				ctx.textAlign = 'left';
 			}
 			else if(options.textAlign == "right"){
-				x = encoding.width - 1;
+				tx = encoding.width - 1;
+				x = tx - tTextWidth;
 				ctx.textAlign = 'right';
 			}
 			// In all other cases, center the text
 			else{
-				x = encoding.width / 2;
+				x = Math.floor((encoding.width - tTextWidth) / 2);
+				x = x>0?x:0;
+				tx = x+Math.ceil(aTextWidth/2);
 				ctx.textAlign = 'center';
 			}
+			console.log('(x,y): (%d,%d)',x,y)
+			console.log('(tx,ty): (%d,%d)',tx,ty)
 
-			ctx.fillText(encoding.text, x, y);
+			if(options.tailsCount > 0) {
+				ctx.font = font;
+				ctx.fillText(aText, x, y); //绘制前半部分
+				ctx.font = tailFont;
+				ctx.textAlign = 'left';
+				ctx.fillText(tText, tx, ty);
+			}else {
+				ctx.font = font;
+				ctx.fillText(encoding.text, x, y);
+			}
 		}
 	}
-
 
 
 	moveCanvasDrawing(encoding){

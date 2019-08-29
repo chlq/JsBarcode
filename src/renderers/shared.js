@@ -2,7 +2,7 @@ import merge from "../help/merge.js";
 
 function getEncodingHeight(encoding, options){
 	return options.height +
-		((options.displayValue && encoding.text.length > 0) ? options.fontSize + options.textMargin : 0) +
+		((options.displayValue && encoding.text.length > 0) ? Math.max(options.fontSize,options.tailsFontSize) + options.textMargin : 0) +
 		options.marginTop +
 		options.marginBottom;
 }
@@ -30,7 +30,7 @@ function calculateEncodingAttributes(encodings, barcodeOptions, context){
 		// Calculate the width of the encoding
 		var textWidth;
 		if(options.displayValue){
-			textWidth = messureText(encoding.text, options, context);
+			textWidth = messureText(encoding.text, options, context).size;
 		}
 		else{
 			textWidth = 0;
@@ -77,12 +77,17 @@ function messureText(string, options, context){
 		// This will make some barcode with big text render incorrectly
 		return 0;
 	}
+	let alen = string.length - parseInt(options.tailsCount);
+	let aText = string.slice(0, alen) //获取前半部分文字
+	let tText = string.slice(alen)    //获取后半部分
 	ctx.font = options.fontOptions + " " + options.fontSize + "px " + options.font;
-
+	let aTextWidth = ctx.measureText(aText).width;
+	ctx.font = options.tailsFontOptions + " " + options.tailsFontSize + "px " + options.font;
+	let tTextWidth = ctx.measureText(tText).width;
 	// Calculate the width of the encoding
-	var size = ctx.measureText(string).width;
+	// var size = aTextWidth + tTextWidth;
 
-	return size;
+	return {aSize: aTextWidth, tSize: tTextWidth, size: aTextWidth+tTextWidth};
 }
 
-export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings};
+export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings,messureText};
