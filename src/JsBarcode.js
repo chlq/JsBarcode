@@ -68,6 +68,12 @@ function registerBarcode(barcodes, name){
 			return api._errorHandler.wrapBarcodeCall(function(){
 				// Ensure text is options.text
 				options.text = typeof options.text === 'undefined' ? undefined : '' + options.text;
+				options.textOpts = typeof options.textOpts === 'undefined'? {
+					text: options.text,
+					font: options.font,
+					fontSize: options.fontSize,
+					fontOptions: options.fontOptions
+				}:(options.textOpts || {})
 
 				var newOptions = merge(api._options, options);
 				newOptions = optionsFromStrings(newOptions);

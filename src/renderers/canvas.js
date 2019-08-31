@@ -41,13 +41,13 @@ class CanvasRenderer{
 		this.canvas.height = maxHeight;
 
 		// Paint the canvas
-		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		ctx.clearRect(this.options.x, this.options.y, this.canvas.width, this.canvas.height);
 		if(this.options.background){
 			ctx.fillStyle = this.options.background;
-			ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+			ctx.fillRect(this.options.x, this.options.y, this.canvas.width, this.canvas.height);
 		}
 
-		ctx.translate(this.options.marginLeft, 0);
+		ctx.translate(this.options.marginLeft, this.options.y);
 	}
 
 	drawCanvasBarcode(options, encoding){
@@ -59,16 +59,16 @@ class CanvasRenderer{
 		// Creates the barcode out of the encoded binary
 		var yFrom;
 		if(options.textPosition == "top"){
-			yFrom = options.marginTop + options.fontSize + options.textMargin;
+			yFrom = options.marginTop + options.fontSize + options.textMargin + options.y;
 		}
 		else{
-			yFrom = options.marginTop;
+			yFrom = options.marginTop + options.y;
 		}
 
 		ctx.fillStyle = options.lineColor;
 
 		for(var b = 0; b < binary.length; b++){
-			var x = b * options.width + encoding.barcodePadding;
+			var x = b * options.width + encoding.barcodePadding + options.x;
 
 			if(binary[b] === "1"){
 				ctx.fillRect(x, yFrom, options.width, options.height);
