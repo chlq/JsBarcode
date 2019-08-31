@@ -2,7 +2,7 @@ import merge from "../help/merge.js";
 
 function getEncodingHeight(encoding, options){
 	return options.height +
-		((options.displayValue && encoding.text.length > 0) ? Math.max(options.fontSize,options.tailsFontSize) + options.textMargin : 0) +
+		((options.displayValue && encoding.text.length > 0) ? options.fontSize + options.textMargin : 0) +
 		options.marginTop +
 		options.marginBottom;
 }
@@ -75,19 +75,12 @@ function messureText(string, options, context){
 	else{
 		// If the text cannot be messured we will return 0.
 		// This will make some barcode with big text render incorrectly
-		return 0;
+		return {size: 0};
 	}
-	let alen = string.length - parseInt(options.tailsCount);
-	let aText = string.slice(0, alen) //获取前半部分文字
-	let tText = string.slice(alen)    //获取后半部分
-	ctx.font = options.fontOptions + " " + options.fontSize + "px " + options.font;
-	let aTextWidth = ctx.measureText(aText).width;
-	ctx.font = options.tailsFontOptions + " " + options.tailsFontSize + "px " + options.font;
-	let tTextWidth = ctx.measureText(tText).width;
 	// Calculate the width of the encoding
 	// var size = aTextWidth + tTextWidth;
 
-	return {aSize: aTextWidth, tSize: tTextWidth, size: aTextWidth+tTextWidth};
+	return {size: ctx.measureText(string)};
 }
 
 export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings,messureText};

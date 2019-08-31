@@ -88,61 +88,37 @@ class SVGRenderer{
 
 		// Draw the text if displayValue is set
 		if(options.displayValue){
-			var x, y, tx, ty;
+			var x, y;
 
 			textElem.setAttribute("style",
 				"font:" + options.fontOptions + " " + options.fontSize + "px " + options.font
 			);
-			let tailFont = options.tailsFontOptions + " " + options.tailsFontSize + "px " + options.font;
-			let alen = encoding.text.length - parseInt(options.tailsCount);
-			let aText = encoding.text.slice(0, alen) //获取前半部分文字
-			let tText = encoding.text.slice(alen)    //获取后半部分
-			let size = messureText(encoding.text, options)
 
 			if(options.textPosition == "top"){
 				y = options.fontSize - options.textMargin;
-				ty = options.tailsFontSize - options.textMargin;
 			}
 			else{
 				y = options.height + options.textMargin + options.fontSize;
-				ty = options.height + options.textMargin + options.tailsFontSize;
 			}
 
 			// Draw the text in the correct X depending on the textAlign option
 			if(options.textAlign == "left" || encoding.barcodePadding > 0){
 				x = 0;
-				tx = size.aSize;
 				textElem.setAttribute("text-anchor", "start");
 			}
 			else if(options.textAlign == "right"){
-				tx = encoding.width - 1;
-				x = tx - size.tSize;
+				x = encoding.width - 1;
 				textElem.setAttribute("text-anchor", "end");
 			}
 			// In all other cases, center the text
 			else{
-				x = Math.floor((encoding.width - size.tSize) / 2);
-				x = x>0?x:0;
-				tx = x+Math.ceil(size.aSize/2);
+				x = Math.floor((encoding.width) / 2);
 				textElem.setAttribute("text-anchor", "middle");
 			}
 			textElem.setAttribute("x", x);
 			textElem.setAttribute("y", y);
 
-			textElem.appendChild(this.document.createTextNode(aText));
-
-			if(options.tailsCount > 0) {
-				textElem.setAttribute("style",
-						"font:" + options.tailsFontOptions + " " + options.fontSize + "px " + options.font
-				);
-
-				textElem.setAttribute("x", tx);
-				textElem.setAttribute("y", ty);
-
-				textElem.appendChild(this.document.createTextNode(tText));
-			}
-
-
+			textElem.appendChild(this.document.createTextNode(encoding.text));
 			parent.appendChild(textElem);
 		}
 	}
