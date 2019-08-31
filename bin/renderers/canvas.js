@@ -32,7 +32,7 @@ var CanvasRenderer = function () {
 			if (!this.canvas.getContext) {
 				throw new Error('The browser does not support canvas.');
 			}
-
+			debugger;
 			this.prepareCanvas();
 			for (var i = 0; i < this.encodings.length; i++) {
 				var encodingOptions = (0, _merge2.default)(this.options, this.encodings[i].options);
@@ -116,8 +116,6 @@ var CanvasRenderer = function () {
 					y = options.height + options.textMargin + options.marginTop + options.fontSize;
 				}
 
-				ctx.font = font;
-
 				// Draw the text in the correct X depending on the textAlign option
 				if (options.textAlign == "left" || encoding.barcodePadding > 0) {
 					x = 0;
@@ -128,10 +126,10 @@ var CanvasRenderer = function () {
 				}
 				// In all other cases, center the text
 				else {
-						x = encoding.width / 2;
+						x = Math.floor(encoding.width / 2);
 						ctx.textAlign = 'center';
 					}
-
+				ctx.font = font;
 				ctx.fillText(encoding.text, x, y);
 			}
 		}

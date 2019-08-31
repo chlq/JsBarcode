@@ -13,7 +13,6 @@ class CanvasRenderer{
 		if (!this.canvas.getContext) {
 			throw new Error('The browser does not support canvas.');
 		}
-
 		this.prepareCanvas();
 		for(let i = 0; i < this.encodings.length; i++){
 			var encodingOptions = merge(this.options, this.encodings[i].options);

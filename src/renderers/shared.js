@@ -47,6 +47,7 @@ function calculateEncodingAttributes(encodings, barcodeOptions, context){
 
 function getTotalWidthOfEncodings(encodings){
 	var totalWidth = 0;
+
 	for(let i = 0; i < encodings.length; i++){
 		totalWidth += encodings[i].width;
 	}
@@ -78,9 +79,7 @@ function messureText(string, options, context){
 		return {size: 0};
 	}
 	// Calculate the width of the encoding
-	// var size = aTextWidth + tTextWidth;
-
-	return {size: ctx.measureText(string)};
+	return {size: ctx.measureText(string).width};
 }
 
 export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings,messureText};

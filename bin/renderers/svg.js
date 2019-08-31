@@ -24,6 +24,7 @@ var SVGRenderer = function () {
 
 		this.svg = svg;
 		this.encodings = encodings;
+
 		this.options = options;
 		this.document = options.xmlDocument || document;
 	}
@@ -125,15 +126,13 @@ var SVGRenderer = function () {
 				}
 				// In all other cases, center the text
 				else {
-						x = encoding.width / 2;
+						x = Math.floor(encoding.width / 2);
 						textElem.setAttribute("text-anchor", "middle");
 					}
-
 				textElem.setAttribute("x", x);
 				textElem.setAttribute("y", y);
 
 				textElem.appendChild(this.document.createTextNode(encoding.text));
-
 				parent.appendChild(textElem);
 			}
 		}

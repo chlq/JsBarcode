@@ -1,9 +1,17 @@
 declare namespace JsBarcode {
+  interface TextOpts {
+    font?: string,
+    fontSize?: number,
+    fontOptions?: string,
+  }
   interface BaseOptions {
+    x?: number;
+    y?: number;
     width?: number;
     height?: number;
     format?: string;
     displayValue?: boolean;
+    textOpts?: TextOpts
     fontOptions?: string;
     font?: string;
     text?: string;
