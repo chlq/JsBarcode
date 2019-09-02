@@ -12,6 +12,8 @@ var _merge2 = _interopRequireDefault(_merge);
 
 var _shared = require("./shared.js");
 
+var _shared2 = require("./shared");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -76,7 +78,7 @@ var SVGRenderer = function () {
 			// Creates the barcode out of the encoded binary
 			var yFrom;
 			if (options.textPosition == "top") {
-				yFrom = options.fontSize + options.textMargin;
+				yFrom = options.maxFontSize + options.textMargin;
 			} else {
 				yFrom = 0;
 			}
@@ -106,34 +108,33 @@ var SVGRenderer = function () {
 
 			// Draw the text if displayValue is set
 			if (options.displayValue) {
-				var x, y;
-
-				textElem.setAttribute("style", "font:" + options.fontOptions + " " + options.fontSize + "px " + options.font);
-
-				if (options.textPosition == "top") {
-					y = options.fontSize - options.textMargin;
-				} else {
-					y = options.height + options.textMargin + options.fontSize;
-				}
-
 				// Draw the text in the correct X depending on the textAlign option
 				if (options.textAlign == "left" || encoding.barcodePadding > 0) {
-					x = 0;
 					textElem.setAttribute("text-anchor", "start");
 				} else if (options.textAlign == "right") {
-					x = encoding.width - 1;
 					textElem.setAttribute("text-anchor", "end");
 				}
 				// In all other cases, center the text
 				else {
-						x = Math.floor(encoding.width / 2);
-						textElem.setAttribute("text-anchor", "middle");
+						textElem.setAttribute("text-anchor", "start");
 					}
-				textElem.setAttribute("x", x);
-				textElem.setAttribute("y", y);
 
-				textElem.appendChild(this.document.createTextNode(encoding.text));
-				parent.appendChild(textElem);
+				(0, _shared2.calculateLocationsOfText)(options, encoding, null);
+				if (typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+					for (var i = 0; i < options.textOpts.length; i++) {
+						var textOpt = options.textOpts[i];
+						if (textOpt.text) {
+							var x = (textOpt.x || options.x) - options.x;
+							var y = (textOpt.y || options.y) - options.y;
+							var text = textOpt.text;
+							textElem.setAttribute("style", "font:" + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font);
+							textElem.setAttribute("x", x);
+							textElem.setAttribute("y", y);
+							textElem.appendChild(this.document.createTextNode(text));
+						}
+					}
+					parent.appendChild(textElem);
+				}
 			}
 		}
 	}, {

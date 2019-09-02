@@ -110,7 +110,7 @@ class SVGRenderer{
 						let y = (textOpt.y || options.y) - options.y
 						let text = textOpt.text
 						textElem.setAttribute("style",
-								"font:" + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
+								"font:" + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font
 						);
 						textElem.setAttribute("x", x);
 						textElem.setAttribute("y", y);
@@ -119,39 +119,6 @@ class SVGRenderer{
 				}
 				parent.appendChild(textElem);
 			}
-
-			var x, y;
-
-			textElem.setAttribute("style",
-				"font:" + options.fontOptions + " " + options.fontSize + "px " + options.font
-			);
-
-			if(options.textPosition == "top"){
-				y = options.fontSize - options.textMargin;
-			}
-			else{
-				y = options.height + options.textMargin + options.fontSize;
-			}
-
-			// Draw the text in the correct X depending on the textAlign option
-			if(options.textAlign == "left" || encoding.barcodePadding > 0){
-				x = 0;
-				textElem.setAttribute("text-anchor", "start");
-			}
-			else if(options.textAlign == "right"){
-				x = encoding.width - 1;
-				textElem.setAttribute("text-anchor", "end");
-			}
-			// In all other cases, center the text
-			else{
-				x = Math.floor((encoding.width) / 2);
-				textElem.setAttribute("text-anchor", "middle");
-			}
-			textElem.setAttribute("x", x);
-			textElem.setAttribute("y", y);
-
-			textElem.appendChild(this.document.createTextNode(encoding.text));
-			parent.appendChild(textElem);
 		}
 	}
 
