@@ -24,6 +24,22 @@ function getMaxFontSize(options) {
 	return maxFontSize;
 }
 
+function getMinFontSize(options) {
+	var minFontSize = options.fontSize;
+	if(typeof options.textOpts !== 'undefined') {
+		if(Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+			for(let i = 0; i < options.textOpts.length; i++)  {
+				let textOpt = options.textOpts[i]
+				if(typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+					textOpt.fontSize = textOpt.fontSize ||options.fontSize || 20
+					minFontSize = Math.min(textOpt.fontSize, minFontSize);
+				}
+			}
+		}
+	}
+	return minFontSize;
+}
+
 function getBarcodePadding(textWidth, barcodeWidth, options){
 	if(options.displayValue && barcodeWidth < textWidth){
 		if(options.textAlign == "center"){
@@ -123,11 +139,19 @@ function calculateLocationsOfText(options, encoding, context) {
 	let ctx = context;
 	if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 		let maxWidth = options.textOpts[options.textOpts.length-1].leftWidth + options.textOpts[options.textOpts.length-1].width || encoding.width
+		var minFontSize = options.fontSize;
+		for(let i = 0; i < options.textOpts.length; i++)  {
+			let textOpt = options.textOpts[i]
+			if(typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+				minFontSize = Math.min(textOpt.fontSize, minFontSize);
+			}
+		}
+
 		for(let i = 0; i < options.textOpts.length; i++) {
 			let textOpt = options.textOpts[i];
 			let x = 0, y = 0;
 			if(options.textPosition == "top"){
-				y = options.marginTop + options.maxFontSize - textOpt.fontSize - options.textMargin + options.y;
+				y = options.marginTop + minFontSize - options.textMargin;
 			}
 			else{
 				y = options.height + options.textMargin + options.marginTop + textOpt.fontSize;
