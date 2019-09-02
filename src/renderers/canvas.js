@@ -1,5 +1,5 @@
 import merge from "../help/merge.js";
-import {calculateEncodingAttributes, getTotalWidthOfEncodings, getMaximumHeightOfEncodings, calculateLocationsOfText} from "./shared.js";
+import {calculateEncodingAttributes, getTotalWidthOfEncodings, getMaximumHeightOfEncodings, calculateLocationsOfText, getMaxFontSize} from "./shared.js";
 
 class CanvasRenderer{
 	constructor(canvas, encodings, options){
@@ -16,7 +16,8 @@ class CanvasRenderer{
 		this.prepareCanvas();
 		for(let i = 0; i < this.encodings.length; i++){
 			var encodingOptions = merge(this.options, this.encodings[i].options);
-
+			var maxFontSize = getMaxFontSize(this.options);
+			encodingOptions.maxFontSize = maxFontSize;
 			this.drawCanvasBarcode(encodingOptions, this.encodings[i]);
 			this.drawCanvasText(encodingOptions, this.encodings[i]);
 
@@ -59,7 +60,7 @@ class CanvasRenderer{
 		// Creates the barcode out of the encoded binary
 		var yFrom;
 		if(options.textPosition == "top"){
-			yFrom = options.marginTop + options.fontSize + options.textMargin + options.y;
+			yFrom = options.marginTop + options.maxFontSize + options.textMargin + options.y;
 		}
 		else{
 			yFrom = options.marginTop + options.y;

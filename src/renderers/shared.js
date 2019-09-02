@@ -1,27 +1,27 @@
 import merge from "../help/merge.js";
 
 function getEncodingHeight(encoding, options){
-	let height = options.fontSize;
+	let height = getMaxFontSize(options);
+	return options.height +
+		((options.displayValue && encoding.text.length > 0) ? height+ options.textMargin : 0) +
+		options.marginTop +
+		options.marginBottom;
+}
+
+function getMaxFontSize(options) {
+	var maxFontSize = options.fontSize;
 	if(typeof options.textOpts !== 'undefined') {
-		if(Array.isArray(options.textOpts)) {
-			if(options.textOpts.length > 0) {
-				for(let i = 0; i < options.textOpts.length; i++)  {
-					let textOpt = options.textOpts[i]
-					if(typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
-						textOpt.height = textOpt.fontSize ||options.fontSize
-						height = Math.max(textOpt.height, height);
-					}else {
-						textOpt.height = 0
-					}
+		if(Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+			for(let i = 0; i < options.textOpts.length; i++)  {
+				let textOpt = options.textOpts[i]
+				if(typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+					textOpt.fontSize = textOpt.fontSize ||options.fontSize || 20
+					maxFontSize = Math.max(textOpt.fontSize, maxFontSize);
 				}
 			}
 		}
 	}
-
-	return options.height +
-		((options.displayValue && encoding.text.length > 0) ? height + options.textMargin : 0) +
-		options.marginTop +
-		options.marginBottom;
+	return maxFontSize;
 }
 
 function getBarcodePadding(textWidth, barcodeWidth, options){
@@ -127,7 +127,7 @@ function calculateLocationsOfText(options, encoding, context) {
 			let textOpt = options.textOpts[i];
 			let x = 0, y = 0;
 			if(options.textPosition == "top"){
-				y = options.marginTop + options.fontSize - textOpt.fontSize - options.textMargin;
+				y = options.marginTop + options.maxFontSize - textOpt.fontSize - options.textMargin + options.y;
 			}
 			else{
 				y = options.height + options.textMargin + options.marginTop + textOpt.fontSize;
@@ -149,9 +149,10 @@ function calculateLocationsOfText(options, encoding, context) {
 			}
 			textOpt.x = x + options.x;
 			textOpt.y = y + options.y;
+			console.log('textOpt pos: (x,y): (' + textOpt.x + ',' + textOpt.y + ')')
 		}
 
 	}
 }
 
-export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings,calculateLocationsOfText};
+export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings,calculateLocationsOfText, getMaxFontSize};

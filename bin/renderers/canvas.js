@@ -35,7 +35,8 @@ var CanvasRenderer = function () {
 			this.prepareCanvas();
 			for (var i = 0; i < this.encodings.length; i++) {
 				var encodingOptions = (0, _merge2.default)(this.options, this.encodings[i].options);
-
+				var maxFontSize = (0, _shared.getMaxFontSize)(this.options);
+				encodingOptions.maxFontSize = maxFontSize;
 				this.drawCanvasBarcode(encodingOptions, this.encodings[i]);
 				this.drawCanvasText(encodingOptions, this.encodings[i]);
 
@@ -80,7 +81,7 @@ var CanvasRenderer = function () {
 			// Creates the barcode out of the encoded binary
 			var yFrom;
 			if (options.textPosition == "top") {
-				yFrom = options.marginTop + options.fontSize + options.textMargin + options.y;
+				yFrom = options.marginTop + options.maxFontSize + options.textMargin + options.y;
 			} else {
 				yFrom = options.marginTop + options.y;
 			}
@@ -102,8 +103,6 @@ var CanvasRenderer = function () {
 		value: function drawCanvasText(options, encoding) {
 			// Get the canvas context
 			var ctx = this.canvas.getContext("2d");
-
-			var font = options.fontOptions + " " + options.fontSize + "px " + options.font;
 
 			// Draw the text if displayValue is set
 			if (options.displayValue) {
