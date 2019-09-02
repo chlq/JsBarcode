@@ -83,8 +83,6 @@ class CanvasRenderer{
 		// Get the canvas context
 		var ctx = this.canvas.getContext("2d");
 
-		var font = options.fontOptions + " " + options.fontSize + "px " + options.font;
-
 		// Draw the text if displayValue is set
 		if(options.displayValue){
 			calculateLocationsOfText(options, encoding, ctx);

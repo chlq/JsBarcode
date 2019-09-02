@@ -81,13 +81,13 @@ function getMaximumHeightOfEncodings(encodings){
 	return maxHeight;
 }
 
-function messureText(options, context){
+function messureText(string, options, context){
 	var ctx;
 
 	if(context){
 		ctx = context;
 	}
-	else if(typeof document !== "undefined"){
+	else if(typeof document !== "undefined" && typeof options.textOpts !== 'undefined'){
 		ctx = document.createElement("canvas").getContext("2d");
 	}
 	else{
@@ -97,31 +97,26 @@ function messureText(options, context){
 	}
 	let width = 0
 	// Calculate the width of the encoding
-	if(typeof options.textOpts !== 'undefined') {
-		if(Array.isArray(options.textOpts)) {
-			if(options.textOpts.length > 0) {
-				for(let i = 0; i < options.textOpts.length; i++)  {
-					let textOpt = options.textOpts[i]
-					if(typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
-						textOpt.fontOptions = textOpt.fontOptions || '';
-						textOpt.fontSize = textOpt.fontSize || options.fontSize;
-						textOpt.font = textOpt.font || options.font;
-						ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
-						textOpt.width = ctx.measureText(textOpt.text).width;
-						textOpt.leftWidth = width
-					}else {
-						textOpt.width = 0;
-						textOpt.leftWidth = width
-					}
-					width += textOpt.width
+	if(Array.isArray(options.textOpts)) {
+		if(options.textOpts.length > 0) {
+			for(let i = 0; i < options.textOpts.length; i++)  {
+				let textOpt = options.textOpts[i]
+				if(typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+					textOpt.fontOptions = textOpt.fontOptions || '';
+					textOpt.fontSize = textOpt.fontSize || options.fontSize;
+					textOpt.font = textOpt.font || options.font;
+					ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
+					textOpt.width = ctx.measureText(textOpt.text).width;
+					textOpt.leftWidth = width
+				}else {
+					textOpt.width = 0;
+					textOpt.leftWidth = width
 				}
+				width += textOpt.width
 			}
 		}
-		return width;
-	}else {
-		ctx.font = options.fontOptions + " " + options.fontSize + "px " + options.font;
-		return ctx.measureText(string).width
 	}
+	return width;
 }
 
 function calculateLocationsOfText(options, encoding, context) {
@@ -132,7 +127,7 @@ function calculateLocationsOfText(options, encoding, context) {
 			let textOpt = options.textOpts[i];
 			let x = 0, y = 0;
 			if(options.textPosition == "top"){
-				y = options.marginTop + textOpt.fontSize - options.textMargin;
+				y = options.marginTop + options.fontSize - textOpt.fontSize - options.textMargin;
 			}
 			else{
 				y = options.height + options.textMargin + options.marginTop + textOpt.fontSize;
@@ -152,8 +147,8 @@ function calculateLocationsOfText(options, encoding, context) {
 				x = Math.floor((encoding.width - maxWidth) / 2 + textOpt.leftWidth);
 				ctx.textAlign = 'left';
 			}
-			textOpt.x = x;
-			textOpt.y = y;
+			textOpt.x = x + options.x;
+			textOpt.y = y + options.y;
 		}
 
 	}

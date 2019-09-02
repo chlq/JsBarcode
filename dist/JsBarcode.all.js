@@ -1103,12 +1103,12 @@ function getMaximumHeightOfEncodings(encodings) {
 	return maxHeight;
 }
 
-function messureText(textOpts, context) {
+function messureText(string, options, context) {
 	var ctx;
 
 	if (context) {
 		ctx = context;
-	} else if (typeof document !== "undefined") {
+	} else if (typeof document !== "undefined" && typeof options.textOpts !== 'undefined') {
 		ctx = document.createElement("canvas").getContext("2d");
 	} else {
 		// If the text cannot be messured we will return 0.
@@ -1117,31 +1117,26 @@ function messureText(textOpts, context) {
 	}
 	var width = 0;
 	// Calculate the width of the encoding
-	if (typeof options.textOpts !== 'undefined') {
-		if (Array.isArray(options.textOpts)) {
-			if (options.textOpts.length > 0) {
-				for (var i = 0; i < options.textOpts.length; i++) {
-					var textOpt = options.textOpts[i];
-					if (typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
-						textOpt.fontOptions = textOpt.fontOptions || '';
-						textOpt.fontSize = textOpt.fontSize || options.fontSize;
-						textOpt.font = textOpt.font || options.font;
-						ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
-						textOpt.width = ctx.measureText(textOpt.text).width;
-						textOpt.leftWidth = width;
-					} else {
-						textOpt.width = 0;
-						textOpt.leftWidth = width;
-					}
-					width += textOpt.width;
+	if (Array.isArray(options.textOpts)) {
+		if (options.textOpts.length > 0) {
+			for (var i = 0; i < options.textOpts.length; i++) {
+				var textOpt = options.textOpts[i];
+				if (typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+					textOpt.fontOptions = textOpt.fontOptions || '';
+					textOpt.fontSize = textOpt.fontSize || options.fontSize;
+					textOpt.font = textOpt.font || options.font;
+					ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
+					textOpt.width = ctx.measureText(textOpt.text).width;
+					textOpt.leftWidth = width;
+				} else {
+					textOpt.width = 0;
+					textOpt.leftWidth = width;
 				}
+				width += textOpt.width;
 			}
 		}
-		return width;
-	} else {
-		ctx.font = options.fontOptions + " " + options.fontSize + "px " + options.font;
-		return ctx.measureText(string).width;
 	}
+	return width;
 }
 
 function calculateLocationsOfText(options, encoding, context) {
