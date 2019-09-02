@@ -32,7 +32,6 @@ var CanvasRenderer = function () {
 			if (!this.canvas.getContext) {
 				throw new Error('The browser does not support canvas.');
 			}
-			debugger;
 			this.prepareCanvas();
 			for (var i = 0; i < this.encodings.length; i++) {
 				var encodingOptions = (0, _merge2.default)(this.options, this.encodings[i].options);
@@ -62,13 +61,13 @@ var CanvasRenderer = function () {
 			this.canvas.height = maxHeight;
 
 			// Paint the canvas
-			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			ctx.clearRect(this.options.x, this.options.y, this.canvas.width, this.canvas.height);
 			if (this.options.background) {
 				ctx.fillStyle = this.options.background;
-				ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+				ctx.fillRect(this.options.x, this.options.y, this.canvas.width, this.canvas.height);
 			}
 
-			ctx.translate(this.options.marginLeft, 0);
+			ctx.translate(this.options.marginLeft, this.options.y);
 		}
 	}, {
 		key: "drawCanvasBarcode",
@@ -81,15 +80,15 @@ var CanvasRenderer = function () {
 			// Creates the barcode out of the encoded binary
 			var yFrom;
 			if (options.textPosition == "top") {
-				yFrom = options.marginTop + options.fontSize + options.textMargin;
+				yFrom = options.marginTop + options.fontSize + options.textMargin + options.y;
 			} else {
-				yFrom = options.marginTop;
+				yFrom = options.marginTop + options.y;
 			}
 
 			ctx.fillStyle = options.lineColor;
 
 			for (var b = 0; b < binary.length; b++) {
-				var x = b * options.width + encoding.barcodePadding;
+				var x = b * options.width + encoding.barcodePadding + options.x;
 
 				if (binary[b] === "1") {
 					ctx.fillRect(x, yFrom, options.width, options.height);
@@ -108,29 +107,17 @@ var CanvasRenderer = function () {
 
 			// Draw the text if displayValue is set
 			if (options.displayValue) {
-				var x, y;
-
-				if (options.textPosition == "top") {
-					y = options.marginTop + options.fontSize - options.textMargin;
-				} else {
-					y = options.height + options.textMargin + options.marginTop + options.fontSize;
-				}
-
-				// Draw the text in the correct X depending on the textAlign option
-				if (options.textAlign == "left" || encoding.barcodePadding > 0) {
-					x = 0;
-					ctx.textAlign = 'left';
-				} else if (options.textAlign == "right") {
-					x = encoding.width - 1;
-					ctx.textAlign = 'right';
-				}
-				// In all other cases, center the text
-				else {
-						x = Math.floor(encoding.width / 2);
-						ctx.textAlign = 'center';
+				(0, _shared.calculateLocationsOfText)(options, encoding, ctx);
+				if (typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+					for (var i = 0; i < options.textOpts.length; i++) {
+						var textOpt = options.textOpts[i];
+						var x = textOpt.x || 0;
+						var y = textOpt.y || 0;
+						var text = textOpt.text;
+						ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
+						ctx.fillText(text, x, y);
 					}
-				ctx.font = font;
-				ctx.fillText(encoding.text, x, y);
+				}
 			}
 		}
 	}, {

@@ -4,10 +4,13 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 var defaults = {
+	x: 0,
+	y: 0,
 	width: 2,
 	height: 100,
 	format: "auto",
 	displayValue: true,
+	textOpts: undefined,
 	fontOptions: "",
 	font: "monospace",
 	text: undefined,

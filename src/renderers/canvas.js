@@ -1,5 +1,5 @@
 import merge from "../help/merge.js";
-import {calculateEncodingAttributes, getTotalWidthOfEncodings, getMaximumHeightOfEncodings} from "./shared.js";
+import {calculateEncodingAttributes, getTotalWidthOfEncodings, getMaximumHeightOfEncodings, calculateLocationsOfText} from "./shared.js";
 
 class CanvasRenderer{
 	constructor(canvas, encodings, options){
@@ -87,31 +87,17 @@ class CanvasRenderer{
 
 		// Draw the text if displayValue is set
 		if(options.displayValue){
-			var x, y;
-
-			if(options.textPosition == "top"){
-				y = options.marginTop + options.fontSize - options.textMargin;
+			calculateLocationsOfText(options, encoding, ctx);
+			if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+				for(let i = 0; i < options.textOpts.length; i++) {
+					let textOpt = options.textOpts[i]
+					let x = textOpt.x || 0
+					let y = textOpt.y || 0
+					let text = textOpt.text
+					ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
+					ctx.fillText(text, x, y)
+				}
 			}
-			else{
-				y = options.height + options.textMargin + options.marginTop + options.fontSize;
-			}
-
-			// Draw the text in the correct X depending on the textAlign option
-			if(options.textAlign == "left" || encoding.barcodePadding > 0){
-				x = 0;
-				ctx.textAlign = 'left';
-			}
-			else if(options.textAlign == "right"){
-				x = encoding.width - 1;
-				ctx.textAlign = 'right';
-			}
-			// In all other cases, center the text
-			else{
-				x = Math.floor((encoding.width) / 2);
-				ctx.textAlign = 'center';
-			}
-			ctx.font = font;
-			ctx.fillText(encoding.text, x, y);
 		}
 	}
 

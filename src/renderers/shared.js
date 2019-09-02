@@ -81,7 +81,7 @@ function getMaximumHeightOfEncodings(encodings){
 	return maxHeight;
 }
 
-function messureText(string, options, context){
+function messureText(textOpts, context){
 	var ctx;
 
 	if(context){
@@ -107,9 +107,11 @@ function messureText(string, options, context){
 						textOpt.fontSize = textOpt.fontSize || options.fontSize;
 						textOpt.font = textOpt.font || options.font;
 						ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
-						textOpt.width = ctx.measureText(string).width;
+						textOpt.width = ctx.measureText(textOpt.text).width;
+						textOpt.leftWidth = width
 					}else {
 						textOpt.width = 0;
+						textOpt.leftWidth = width
 					}
 					width += textOpt.width
 				}
@@ -122,4 +124,39 @@ function messureText(string, options, context){
 	}
 }
 
-export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings,messureText};
+function calculateLocationsOfText(options, encoding, context) {
+	let ctx = context;
+	if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+		let maxWidth = options.textOpts[options.textOpts.length-1].leftWidth + options.textOpts[options.textOpts.length-1].width || encoding.width
+		for(let i = 0; i < options.textOpts.length; i++) {
+			let textOpt = options.textOpts[i];
+			let x = 0, y = 0;
+			if(options.textPosition == "top"){
+				y = options.marginTop + textOpt.fontSize - options.textMargin;
+			}
+			else{
+				y = options.height + options.textMargin + options.marginTop + textOpt.fontSize;
+			}
+
+			// Draw the text in the correct X depending on the textAlign option
+			if(options.textAlign == "left" || encoding.barcodePadding > 0){
+				x = textOpt.leftWidth;
+				ctx.textAlign = 'left';
+			}
+			else if(options.textAlign == "right"){
+				x = encoding.width - textOpt.leftWidth - 1;
+				ctx.textAlign = 'right';
+			}
+			// In all other cases, center the text
+			else{
+				x = Math.floor((encoding.width - maxWidth) / 2 + textOpt.leftWidth);
+				ctx.textAlign = 'left';
+			}
+			textOpt.x = x;
+			textOpt.y = y;
+		}
+
+	}
+}
+
+export {getMaximumHeightOfEncodings, getEncodingHeight, getBarcodePadding, calculateEncodingAttributes, getTotalWidthOfEncodings,calculateLocationsOfText};
