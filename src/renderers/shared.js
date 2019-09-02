@@ -81,7 +81,7 @@ function getMaximumHeightOfEncodings(encodings){
 	return maxHeight;
 }
 
-function messureText(textOpts, context){
+function messureText(options, context){
 	var ctx;
 
 	if(context){

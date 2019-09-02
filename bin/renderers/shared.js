@@ -53,7 +53,7 @@ function calculateEncodingAttributes(encodings, barcodeOptions, context) {
 		// Calculate the width of the encoding
 		var textWidth;
 		if (options.displayValue) {
-			textWidth = messureText(options.textOpts, context);
+			textWidth = messureText(encoding.text, options, context);
 		} else {
 			textWidth = 0;
 		}
@@ -100,11 +100,11 @@ function messureText(textOpts, context) {
 	}
 	var width = 0;
 	// Calculate the width of the encoding
-	if (typeof textOpts !== 'undefined') {
-		if (Array.isArray(textOpts)) {
-			if (textOpts.length > 0) {
-				for (var i = 0; i < textOpts.length; i++) {
-					var textOpt = textOpts[i];
+	if (typeof options.textOpts !== 'undefined') {
+		if (Array.isArray(options.textOpts)) {
+			if (options.textOpts.length > 0) {
+				for (var i = 0; i < options.textOpts.length; i++) {
+					var textOpt = options.textOpts[i];
 					if (typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
 						textOpt.fontOptions = textOpt.fontOptions || '';
 						textOpt.fontSize = textOpt.fontSize || options.fontSize;
