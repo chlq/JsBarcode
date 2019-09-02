@@ -83,10 +83,20 @@ class CanvasRenderer{
 	drawCanvasText(options, encoding){
 		// Get the canvas context
 		var ctx = this.canvas.getContext("2d");
-
+		// Draw the text in the correct X depending on the textAlign option
+		if(options.textAlign == "left" || encoding.barcodePadding > 0){
+			ctx.textAlign = 'left';
+		}
+		else if(options.textAlign == "right"){
+			ctx.textAlign = 'right';
+		}
+		// In all other cases, center the text
+		else{
+			ctx.textAlign = 'left';
+		}
 		// Draw the text if displayValue is set
 		if(options.displayValue){
-			calculateLocationsOfText(options, encoding, ctx);
+			calculateLocationsOfText(options, encoding);
 			if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 				for(let i = 0; i < options.textOpts.length; i++) {
 					let textOpt = options.textOpts[i]

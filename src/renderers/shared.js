@@ -135,8 +135,7 @@ function messureText(string, options, context){
 	return width;
 }
 
-function calculateLocationsOfText(options, encoding, context) {
-	let ctx = context;
+function calculateLocationsOfText(options, encoding) {
 	if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 		let maxWidth = options.textOpts[options.textOpts.length-1].leftWidth + options.textOpts[options.textOpts.length-1].width || encoding.width
 		var minFontSize = options.fontSize;
@@ -151,7 +150,7 @@ function calculateLocationsOfText(options, encoding, context) {
 			let textOpt = options.textOpts[i];
 			let x = 0, y = 0;
 			if(options.textPosition == "top"){
-				y = options.marginTop + minFontSize - options.textMargin;
+				y = options.marginTop + options.maxFontSize - options.textMargin;
 			}
 			else{
 				y = options.height + options.textMargin + options.marginTop + textOpt.fontSize;
@@ -160,20 +159,16 @@ function calculateLocationsOfText(options, encoding, context) {
 			// Draw the text in the correct X depending on the textAlign option
 			if(options.textAlign == "left" || encoding.barcodePadding > 0){
 				x = textOpt.leftWidth;
-				ctx.textAlign = 'left';
 			}
 			else if(options.textAlign == "right"){
 				x = encoding.width - textOpt.leftWidth - 1;
-				ctx.textAlign = 'right';
 			}
 			// In all other cases, center the text
 			else{
 				x = Math.floor((encoding.width - maxWidth) / 2 + textOpt.leftWidth);
-				ctx.textAlign = 'left';
 			}
 			textOpt.x = x + options.x;
 			textOpt.y = y + options.y;
-			console.log('textOpt pos: (x,y): (' + textOpt.x + ',' + textOpt.y + ')')
 		}
 
 	}

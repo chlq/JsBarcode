@@ -32,6 +32,22 @@ function getMaxFontSize(options) {
 	return maxFontSize;
 }
 
+function getMinFontSize(options) {
+	var minFontSize = options.fontSize;
+	if (typeof options.textOpts !== 'undefined') {
+		if (Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+			for (var i = 0; i < options.textOpts.length; i++) {
+				var textOpt = options.textOpts[i];
+				if (typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+					textOpt.fontSize = textOpt.fontSize || options.fontSize || 20;
+					minFontSize = Math.min(textOpt.fontSize, minFontSize);
+				}
+			}
+		}
+	}
+	return minFontSize;
+}
+
 function getBarcodePadding(textWidth, barcodeWidth, options) {
 	if (options.displayValue && barcodeWidth < textWidth) {
 		if (options.textAlign == "center") {
@@ -126,32 +142,39 @@ function calculateLocationsOfText(options, encoding, context) {
 	var ctx = context;
 	if (typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 		var maxWidth = options.textOpts[options.textOpts.length - 1].leftWidth + options.textOpts[options.textOpts.length - 1].width || encoding.width;
+		var minFontSize = options.fontSize;
 		for (var i = 0; i < options.textOpts.length; i++) {
 			var textOpt = options.textOpts[i];
+			if (typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+				minFontSize = Math.min(textOpt.fontSize, minFontSize);
+			}
+		}
+
+		for (var _i = 0; _i < options.textOpts.length; _i++) {
+			var _textOpt = options.textOpts[_i];
 			var x = 0,
 			    y = 0;
 			if (options.textPosition == "top") {
-				y = options.marginTop + options.maxFontSize - textOpt.fontSize - options.textMargin + options.y;
+				y = options.marginTop + options.maxFontSize - options.textMargin - minFontSize;
 			} else {
-				y = options.height + options.textMargin + options.marginTop + textOpt.fontSize;
+				y = options.height + options.textMargin + options.marginTop + _textOpt.fontSize;
 			}
 
 			// Draw the text in the correct X depending on the textAlign option
 			if (options.textAlign == "left" || encoding.barcodePadding > 0) {
-				x = textOpt.leftWidth;
+				x = _textOpt.leftWidth;
 				ctx.textAlign = 'left';
 			} else if (options.textAlign == "right") {
-				x = encoding.width - textOpt.leftWidth - 1;
+				x = encoding.width - _textOpt.leftWidth - 1;
 				ctx.textAlign = 'right';
 			}
 			// In all other cases, center the text
 			else {
-					x = Math.floor((encoding.width - maxWidth) / 2 + textOpt.leftWidth);
+					x = Math.floor((encoding.width - maxWidth) / 2 + _textOpt.leftWidth);
 					ctx.textAlign = 'left';
 				}
-			textOpt.x = x + options.x;
-			textOpt.y = y + options.y;
-			console.log('textOpt pos: (x,y): (' + textOpt.x + ',' + textOpt.y + ')');
+			_textOpt.x = x + options.x;
+			_textOpt.y = y + options.y;
 		}
 	}
 }

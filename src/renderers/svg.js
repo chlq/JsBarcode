@@ -1,5 +1,6 @@
 import merge from "../help/merge.js";
 import {calculateEncodingAttributes, getTotalWidthOfEncodings, getMaximumHeightOfEncodings,messureText} from "./shared.js";
+import {calculateLocationsOfText} from "./shared";
 
 var svgns = "http://www.w3.org/2000/svg";
 
@@ -57,7 +58,7 @@ class SVGRenderer{
 		// Creates the barcode out of the encoded binary
 		var yFrom;
 		if(options.textPosition == "top"){
-			yFrom = options.fontSize + options.textMargin;
+			yFrom = options.maxFontSize + options.textMargin;
 		}
 		else{
 			yFrom = 0;
@@ -88,6 +89,37 @@ class SVGRenderer{
 
 		// Draw the text if displayValue is set
 		if(options.displayValue){
+			// Draw the text in the correct X depending on the textAlign option
+			if(options.textAlign == "left" || encoding.barcodePadding > 0){
+				textElem.setAttribute("text-anchor", "start");
+			}
+			else if(options.textAlign == "right"){
+				textElem.setAttribute("text-anchor", "end");
+			}
+			// In all other cases, center the text
+			else{
+				textElem.setAttribute("text-anchor", "start");
+			}
+
+			calculateLocationsOfText(options, encoding, null);
+			if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
+				for(let i = 0; i < options.textOpts.length; i++) {
+					let textOpt = options.textOpts[i]
+					if( textOpt.text ) {
+						let x = (textOpt.x || options.x) - options.x
+						let y = (textOpt.y || options.y) - options.y
+						let text = textOpt.text
+						textElem.setAttribute("style",
+								"font:" + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
+						);
+						textElem.setAttribute("x", x);
+						textElem.setAttribute("y", y);
+						textElem.appendChild(this.document.createTextNode(text));
+					}
+				}
+				parent.appendChild(textElem);
+			}
+
 			var x, y;
 
 			textElem.setAttribute("style",
