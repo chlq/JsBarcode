@@ -69,7 +69,7 @@ function registerBarcode(barcodes, name){
 				// Ensure text is options.text
 				options.text = typeof options.text === 'undefined' ? undefined : '' + options.text;
 				options.textOpts = typeof options.textOpts === 'undefined'? {
-					text: options.text,
+					text: (typeof options.text === 'undefined')?text:options.text,
 					font: options.font,
 					fontSize: options.fontSize,
 					fontOptions: options.fontOptions

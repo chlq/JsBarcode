@@ -165,10 +165,6 @@ function calculateLocationsOfText(options, encoding) {
 			}
 			// In all other cases, center the text
 			else{
-				console.log('encoding.width: ' + encoding.width)
-				console.log('textOpt.width: ' + textOpt.width)
-				console.log('sumWidth: ' + sumWidth)
-				console.log('textOpt.leftWidth: ' + textOpt.leftWidth)
 				x = Math.floor((encoding.width + textOpt.width - sumWidth ) / 2 + textOpt.leftWidth);
 			}
 			textOpt.x = x + options.x;

@@ -129,12 +129,10 @@ var SVGRenderer = function () {
 							var y = textOpt.y;
 							var text = textOpt.text;
 							textElem.setAttribute("style", "font: " + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font);
-							console.log("font: " + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font);
 							textElem.setAttribute("x", x);
 							textElem.setAttribute("y", y);
 							textElem.appendChild(this.document.createTextNode(text));
 							parent.appendChild(textElem);
-							console.log('(x,y): (' + textOpt.x + ', ' + textOpt.y + ')' + 'fontSize: ' + textOpt.fontSize + ' wdith: ' + textOpt.width);
 						}
 					}
 				}
