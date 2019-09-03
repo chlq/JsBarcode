@@ -92,19 +92,16 @@ class CanvasRenderer{
 		}
 		// In all other cases, center the text
 		else{
-			ctx.textAlign = 'left';
+			ctx.textAlign = 'center';
 		}
 		// Draw the text if displayValue is set
 		if(options.displayValue){
 			calculateLocationsOfText(options, encoding);
 			if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 				for(let i = 0; i < options.textOpts.length; i++) {
-					let textOpt = options.textOpts[i]
-					let x = textOpt.x || 0
-					let y = textOpt.y || 0
-					let text = textOpt.text
+					let textOpt = options.textOpts[i];
 					ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
-					ctx.fillText(text, x, y)
+					ctx.fillText(textOpt.text, textOpt.x, textOpt.y);
 				}
 			}
 		}

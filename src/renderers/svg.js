@@ -85,39 +85,36 @@ class SVGRenderer{
 	}
 
 	drawSVGText(parent, options, encoding){
-		var textElem = this.document.createElementNS(svgns, 'text');
 
 		// Draw the text if displayValue is set
 		if(options.displayValue){
-			// Draw the text in the correct X depending on the textAlign option
-			if(options.textAlign == "left" || encoding.barcodePadding > 0){
-				textElem.setAttribute("text-anchor", "start");
-			}
-			else if(options.textAlign == "right"){
-				textElem.setAttribute("text-anchor", "end");
-			}
-			// In all other cases, center the text
-			else{
-				textElem.setAttribute("text-anchor", "start");
-			}
 
 			calculateLocationsOfText(options, encoding, null);
 			if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 				for(let i = 0; i < options.textOpts.length; i++) {
+					var textElem = this.document.createElementNS(svgns, 'text');
+					if(options.textAlign == "left" || encoding.barcodePadding > 0){
+						textElem.setAttribute("text-anchor", "start");
+					}
+					else if(options.textAlign == "right"){
+						textElem.setAttribute("text-anchor", "end");
+					}
+					// In all other cases, center the text
+					else{
+						textElem.setAttribute("text-anchor", "middle");
+					}
+
 					let textOpt = options.textOpts[i]
-					if( textOpt.text ) {
-						let x = (textOpt.x || options.x) - options.x
-						let y = (textOpt.y || options.y) - options.y
-						let text = textOpt.text
+					if( typeof textOpt.text !== 'undefined' && textOpt.text.length > 0) {
 						textElem.setAttribute("style",
-								"font:" + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font
+								"font: " + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font
 						);
-						textElem.setAttribute("x", x);
-						textElem.setAttribute("y", y);
-						textElem.appendChild(this.document.createTextNode(text));
+						textElem.setAttribute("x", textOpt.x);
+						textElem.setAttribute("y", textOpt.y);
+						textElem.appendChild(this.document.createTextNode(textOpt.text));
+						parent.appendChild(textElem);
 					}
 				}
-				parent.appendChild(textElem);
 			}
 		}
 	}

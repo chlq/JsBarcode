@@ -111,19 +111,20 @@ var CanvasRenderer = function () {
 			}
 			// In all other cases, center the text
 			else {
-					ctx.textAlign = 'left';
+					ctx.textAlign = 'center';
 				}
 			// Draw the text if displayValue is set
 			if (options.displayValue) {
+				console.log('========>canvas');
 				(0, _shared.calculateLocationsOfText)(options, encoding);
 				if (typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 					for (var i = 0; i < options.textOpts.length; i++) {
 						var textOpt = options.textOpts[i];
-						var x = textOpt.x || 0;
-						var y = textOpt.y || 0;
-						var text = textOpt.text;
 						ctx.font = textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font;
-						ctx.fillText(text, x, y);
+						ctx.fillText(textOpt.text, textOpt.x, textOpt.y);
+						ctx.strokeStyle = 'green';
+						ctx.strokeRect(textOpt.x, textOpt.y - textOpt.fontSize, textOpt.width, textOpt.fontSize);
+						console.log('(x,y): (' + textOpt.x + ', ' + textOpt.y + ')' + 'fontSize: ' + textOpt.fontSize + ' wdith: ' + textOpt.width);
 					}
 				}
 			}

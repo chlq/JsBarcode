@@ -70,6 +70,7 @@ function calculateEncodingAttributes(encodings, barcodeOptions, context){
 		}
 
 		var barcodeWidth = encoding.data.length * options.width;
+		debugger
 		encoding.width =  Math.ceil(Math.max(textWidth, barcodeWidth));
 
 		encoding.height = getEncodingHeight(encoding, options);
@@ -132,23 +133,22 @@ function messureText(string, options, context){
 			}
 		}
 	}
-	return width;
+	return Math.ceil(width);
 }
 
 function calculateLocationsOfText(options, encoding) {
 	if(typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
-		let maxWidth = options.textOpts[options.textOpts.length-1].leftWidth + options.textOpts[options.textOpts.length-1].width || encoding.width
-		var minFontSize = options.fontSize;
-		for(let i = 0; i < options.textOpts.length; i++)  {
-			let textOpt = options.textOpts[i]
-			if(typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
-				minFontSize = Math.min(textOpt.fontSize, minFontSize);
+		let sumWidth = 0;
+		for (var i = 0; i < options.textOpts.length; i++) {
+			var textOpt = options.textOpts[i];
+			if (typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
+				sumWidth += textOpt.width;
 			}
 		}
 
 		for(let i = 0; i < options.textOpts.length; i++) {
 			let textOpt = options.textOpts[i];
-			let x = 0, y = 0;
+			var x = 0, y = 0;
 			if(options.textPosition == "top"){
 				y = options.marginTop + options.maxFontSize - options.textMargin;
 			}
@@ -165,7 +165,11 @@ function calculateLocationsOfText(options, encoding) {
 			}
 			// In all other cases, center the text
 			else{
-				x = Math.floor((encoding.width - maxWidth) / 2 + textOpt.leftWidth);
+				console.log('encoding.width: ' + encoding.width)
+				console.log('textOpt.width: ' + textOpt.width)
+				console.log('sumWidth: ' + sumWidth)
+				console.log('textOpt.leftWidth: ' + textOpt.leftWidth)
+				x = Math.floor((encoding.width + textOpt.width - sumWidth ) / 2 + textOpt.leftWidth);
 			}
 			textOpt.x = x + options.x;
 			textOpt.y = y + options.y;

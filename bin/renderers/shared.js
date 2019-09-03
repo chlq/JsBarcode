@@ -75,6 +75,7 @@ function calculateEncodingAttributes(encodings, barcodeOptions, context) {
 		}
 
 		var barcodeWidth = encoding.data.length * options.width;
+		debugger;
 		encoding.width = Math.ceil(Math.max(textWidth, barcodeWidth));
 
 		encoding.height = getEncodingHeight(encoding, options);
@@ -135,17 +136,16 @@ function messureText(string, options, context) {
 			}
 		}
 	}
-	return width;
+	return Math.ceil(width);
 }
 
 function calculateLocationsOfText(options, encoding) {
 	if (typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
-		var maxWidth = options.textOpts[options.textOpts.length - 1].leftWidth + options.textOpts[options.textOpts.length - 1].width || encoding.width;
-		var minFontSize = options.fontSize;
+		var sumWidth = 0;
 		for (var i = 0; i < options.textOpts.length; i++) {
 			var textOpt = options.textOpts[i];
 			if (typeof textOpt.text !== "undefined" && textOpt.text.length > 0) {
-				minFontSize = Math.min(textOpt.fontSize, minFontSize);
+				sumWidth += textOpt.width;
 			}
 		}
 
@@ -167,7 +167,11 @@ function calculateLocationsOfText(options, encoding) {
 			}
 			// In all other cases, center the text
 			else {
-					x = Math.floor((encoding.width - maxWidth) / 2 + _textOpt.leftWidth);
+					console.log('encoding.width: ' + encoding.width);
+					console.log('textOpt.width: ' + _textOpt.width);
+					console.log('sumWidth: ' + sumWidth);
+					console.log('textOpt.leftWidth: ' + _textOpt.leftWidth);
+					x = Math.floor((encoding.width + _textOpt.width - sumWidth) / 2 + _textOpt.leftWidth);
 				}
 			_textOpt.x = x + options.x;
 			_textOpt.y = y + options.y;

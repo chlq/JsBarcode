@@ -104,36 +104,39 @@ var SVGRenderer = function () {
 	}, {
 		key: "drawSVGText",
 		value: function drawSVGText(parent, options, encoding) {
-			var textElem = this.document.createElementNS(svgns, 'text');
 
 			// Draw the text if displayValue is set
 			if (options.displayValue) {
-				// Draw the text in the correct X depending on the textAlign option
-				if (options.textAlign == "left" || encoding.barcodePadding > 0) {
-					textElem.setAttribute("text-anchor", "start");
-				} else if (options.textAlign == "right") {
-					textElem.setAttribute("text-anchor", "end");
-				}
-				// In all other cases, center the text
-				else {
-						textElem.setAttribute("text-anchor", "start");
-					}
+				console.log('========>canvas');
 
 				(0, _shared2.calculateLocationsOfText)(options, encoding, null);
 				if (typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
 					for (var i = 0; i < options.textOpts.length; i++) {
+						var textElem = this.document.createElementNS(svgns, 'text');
+						if (options.textAlign == "left" || encoding.barcodePadding > 0) {
+							textElem.setAttribute("text-anchor", "start");
+						} else if (options.textAlign == "right") {
+							textElem.setAttribute("text-anchor", "end");
+						}
+						// In all other cases, center the text
+						else {
+								textElem.setAttribute("text-anchor", "middle");
+							}
+
 						var textOpt = options.textOpts[i];
 						if (textOpt.text) {
-							var x = (textOpt.x || options.x) - options.x;
-							var y = (textOpt.y || options.y) - options.y;
+							var x = textOpt.x;
+							var y = textOpt.y;
 							var text = textOpt.text;
-							textElem.setAttribute("style", "font:" + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font);
+							textElem.setAttribute("style", "font: " + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font);
+							console.log("font: " + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font);
 							textElem.setAttribute("x", x);
 							textElem.setAttribute("y", y);
 							textElem.appendChild(this.document.createTextNode(text));
+							parent.appendChild(textElem);
+							console.log('(x,y): (' + textOpt.x + ', ' + textOpt.y + ')' + 'fontSize: ' + textOpt.fontSize + ' wdith: ' + textOpt.width);
 						}
 					}
-					parent.appendChild(textElem);
 				}
 			}
 		}
