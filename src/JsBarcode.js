@@ -4,7 +4,7 @@ import barcodes from './barcodes/';
 // Help functions
 import merge from './help/merge.js';
 import linearizeEncodings from './help/linearizeEncodings.js';
-import fixOptions from './help/fixOptions.js';
+import {fixOptions,fixTextOpts} from './help/fixOptions.js';
 import getRenderProperties from './help/getRenderProperties.js';
 import optionsFromStrings from './help/optionsFromStrings.js';
 
@@ -68,13 +68,6 @@ function registerBarcode(barcodes, name){
 			return api._errorHandler.wrapBarcodeCall(function(){
 				// Ensure text is options.text
 				options.text = typeof options.text === 'undefined' ? undefined : '' + options.text;
-				options.textOpts = typeof options.textOpts === 'undefined'? {
-					text: (typeof options.text === 'undefined')?text:options.text,
-					font: options.font,
-					fontSize: options.fontSize,
-					fontOptions: options.fontOptions
-				}:(options.textOpts || {})
-
 				var newOptions = merge(api._options, options);
 				newOptions = optionsFromStrings(newOptions);
 				var Encoder = barcodes[name];
@@ -197,6 +190,7 @@ function render(renderProperties, encodings, options){
 	for(let i = 0; i < encodings.length; i++){
 		encodings[i].options = merge(options, encodings[i].options);
 		fixOptions(encodings[i].options);
+		fixTextOpts(encodings[i])
 	}
 
 	fixOptions(options);

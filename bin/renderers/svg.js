@@ -107,7 +107,6 @@ var SVGRenderer = function () {
 
 			// Draw the text if displayValue is set
 			if (options.displayValue) {
-				console.log('========>canvas');
 
 				(0, _shared2.calculateLocationsOfText)(options, encoding, null);
 				if (typeof options.textOpts !== 'undefined' && Array.isArray(options.textOpts) && options.textOpts.length > 0) {
@@ -124,14 +123,11 @@ var SVGRenderer = function () {
 							}
 
 						var textOpt = options.textOpts[i];
-						if (textOpt.text) {
-							var x = textOpt.x;
-							var y = textOpt.y;
-							var text = textOpt.text;
+						if (typeof textOpt.text !== 'undefined' && textOpt.text.length > 0) {
 							textElem.setAttribute("style", "font: " + textOpt.fontOptions + " " + textOpt.fontSize + "px " + textOpt.font);
-							textElem.setAttribute("x", x);
-							textElem.setAttribute("y", y);
-							textElem.appendChild(this.document.createTextNode(text));
+							textElem.setAttribute("x", textOpt.x);
+							textElem.setAttribute("y", textOpt.y);
+							textElem.appendChild(this.document.createTextNode(textOpt.text));
 							parent.appendChild(textElem);
 						}
 					}

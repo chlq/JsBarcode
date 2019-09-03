@@ -14,8 +14,6 @@ var _linearizeEncodings2 = _interopRequireDefault(_linearizeEncodings);
 
 var _fixOptions = require('./help/fixOptions.js');
 
-var _fixOptions2 = _interopRequireDefault(_fixOptions);
-
 var _getRenderProperties = require('./help/getRenderProperties.js');
 
 var _getRenderProperties2 = _interopRequireDefault(_getRenderProperties);
@@ -97,13 +95,6 @@ function registerBarcode(barcodes, name) {
 		return api._errorHandler.wrapBarcodeCall(function () {
 			// Ensure text is options.text
 			options.text = typeof options.text === 'undefined' ? undefined : '' + options.text;
-			options.textOpts = typeof options.textOpts === 'undefined' ? {
-				text: options.text,
-				font: options.font,
-				fontSize: options.fontSize,
-				fontOptions: options.fontOptions
-			} : options.textOpts || {};
-
 			var newOptions = (0, _merge2.default)(api._options, options);
 			newOptions = (0, _optionsFromStrings2.default)(newOptions);
 			var Encoder = barcodes[name];
@@ -223,10 +214,11 @@ function render(renderProperties, encodings, options) {
 
 	for (var i = 0; i < encodings.length; i++) {
 		encodings[i].options = (0, _merge2.default)(options, encodings[i].options);
-		(0, _fixOptions2.default)(encodings[i].options);
+		(0, _fixOptions.fixOptions)(encodings[i].options);
+		(0, _fixOptions.fixTextOpts)(encodings[i]);
 	}
 
-	(0, _fixOptions2.default)(options);
+	(0, _fixOptions.fixOptions)(options);
 
 	var Renderer = renderProperties.renderer;
 	var renderer = new Renderer(renderProperties.element, encodings, options);
